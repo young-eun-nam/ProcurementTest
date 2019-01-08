@@ -125,9 +125,31 @@ class PythonWebTest(unittest.TestCase):
         # 발주일 클릭
         element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('발주일'))
         element.click()
-        # <div class="v-date-picker-table v-date-picker-table--date theme--light">
-        # 안에 있는 모든 <button type="button" class="v-btn v-btn--flat v-btn--floating theme--light"><div class="v-btn__content">1</div></button>
-        #
+
+        # 발주일 클릭
+        element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('발주일'))
+        element.click()
+        time.sleep(1)
+        elements = driver.find_elements_by_xpath('//button[@type="button"]/div[@class="v-btn__content"]')
+        for element in elements:
+            print(element.text)
+            if element.text == '9':
+                print("awesome")
+                element.click()
+                break
+
+        # 결제일
+        element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('결제일'))
+        element.click()
+        time.sleep(1)
+        elements = driver.find_elements_by_xpath('//button[@type="button"]/div[@class="v-btn__content"]')
+        for element in elements:
+            print(element.text)
+            if element.text == '10':
+                print("awesome")
+                element.click()
+                break
+                
         # 발주자
         # (default- 발주자/결제자 선택시 자동 입력) 연락처 번호, 연락처 이메일
         element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('발주자'))
