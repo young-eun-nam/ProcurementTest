@@ -38,22 +38,21 @@ TAP_HREF_NAME = ('proposal', 'payment', 'receipt')
 
 XPATH_TAB_TEMPLATE = '//a[@href="#{}"]'
 
-PATH_IMG = 'C:\\Tmp\\example.png'
+PATH_IMG = 'C:\\Temp\\example.png'
 
 
 class PythonWebTest(unittest.TestCase):
 
     def setUp(self):
         self.driver = webdriver.Chrome()
-
+        print('open browser')
 
     def tearDown(self):
         try:
             self.driver.close()
+            print('close browser')
         except Exception as e:
-            print('tearDown2', e)
-        print('tearDown')
-        pass
+            print('tearDown Error', e)
 
     # @unittest.skip('skip')
     def test_fill_1_proposal(self):
@@ -108,7 +107,8 @@ class PythonWebTest(unittest.TestCase):
         # 제출한 품의가 있을 경우 가장 최신 품의
         element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('품의 번호'))
         element.click()
-        time.sleep(2) # spread sheet에서 loading 되어지는데 필요한 시간이 있다
+        # spread sheet에서 loading 되어지는데 필요한 시간
+        time.sleep(2)
 
         element.send_keys(Keys.ARROW_DOWN)
         element.send_keys(Keys.ENTER)
@@ -121,35 +121,27 @@ class PythonWebTest(unittest.TestCase):
         element.send_keys(Keys.ENTER)
 
         # (option) 거래처 변경 할 수도 있음
-        # (수동) 발주일
-        # 발주일 클릭
-        element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('발주일'))
-        element.click()
 
         # 발주일 클릭
         element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('발주일'))
         element.click()
-        time.sleep(1)
+        time.sleep(0.5)
         elements = driver.find_elements_by_xpath('//button[@type="button"]/div[@class="v-btn__content"]')
         for element in elements:
-            print(element.text)
-            if element.text == '9':
-                print("awesome")
+            if element.text == '1':
                 element.click()
                 break
 
         # 결제일
         element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('결제일'))
         element.click()
-        time.sleep(1)
+        time.sleep(0.5)
         elements = driver.find_elements_by_xpath('//button[@type="button"]/div[@class="v-btn__content"]')
         for element in elements:
-            print(element.text)
             if element.text == '10':
-                print("awesome")
                 element.click()
                 break
-                
+
         # 발주자
         # (default- 발주자/결제자 선택시 자동 입력) 연락처 번호, 연락처 이메일
         element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('발주자'))
@@ -164,7 +156,7 @@ class PythonWebTest(unittest.TestCase):
         element = driver.find_element_by_xpath(XPATH_TEXTAREA_TEMPLATE.format('추가 내용 및 비고'))
         element.send_keys('추가 내용 및 비고 없음')
 
-        time.sleep(10)
+        time.sleep(20)
 
 
 if __name__ == '__main__':
