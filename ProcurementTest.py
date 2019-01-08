@@ -67,8 +67,6 @@ for label_name, input in TEXTAREA_LABEL_NAMES_AND_INPUT:
 
 file_button_css_selector = '#EstimateImage'
 file_upload = driver.find_element_by_css_selector(file_button_css_selector)
-file_upload.click()
-
 file_path = os.path.abspath('/Users/admin/Screenshot_2.png')
 file_upload.send_keys(file_path)
 
