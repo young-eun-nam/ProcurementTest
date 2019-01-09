@@ -99,10 +99,13 @@ class PythonWebTest(unittest.TestCase):
         element.send_keys(file_path)
 
         # 품의제출 버튼 클릭
-        # element = driver.find_element_by_xpath('//button[@class="v-btn v-btn--block theme--dark"]')
-        # element.click()
+        elements = driver.find_elements_by_xpath('//button[@class="v-btn v-btn--block theme--dark"]')
+        for element in elements:
+            if element.text.__contains__('품의제출'):
+                element.click()
 
-        time.sleep(10)
+        # 엑셀에 반영될 때 까지 각 단계에서 24, 17, 21초
+        time.sleep(25)
 
     # @unittest.skip('skip')
     def test_fill_2_payment(self):
@@ -176,7 +179,14 @@ class PythonWebTest(unittest.TestCase):
         file_path = os.path.abspath(PATH_IMG)
         element.send_keys(file_path)
 
-        time.sleep(10)
+        # 결제보고 버튼 클릭
+        elements = driver.find_elements_by_xpath('//button[@class="v-btn v-btn--block theme--dark"]')
+        for element in elements:
+            if element.text.__contains__('결제보고'):
+                element.click()
+
+        # 엑셀에 반영될 때 까지 각 단계에서 24, 17, 21초
+        time.sleep(25)
 
     # @unittest.skip('skip')
     def test_fill_3_receipt(self):
@@ -227,6 +237,12 @@ class PythonWebTest(unittest.TestCase):
         element = driver.find_element_by_xpath('//input[@id="tradeStatementImage"]')
         file_path = os.path.abspath(PATH_IMG)
         element.send_keys(file_path)
+
+        # 입고보고 버튼 클릭
+        elements = driver.find_elements_by_xpath('//button[@class="v-btn v-btn--block theme--dark"]')
+        for element in elements:
+            if element.text.__contains__('입고보고'):
+                element.click()
 
         time.sleep(10)
 
