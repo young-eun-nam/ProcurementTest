@@ -59,7 +59,6 @@ class PythonWebTest(unittest.TestCase):
         print('proposal')
         driver = self.driver
         driver.get(PROCUREMENT_URL)
-        time.sleep(1)
 
         for label_name, input in INPUT_LABEL_NAMES_AND_INPUT:
             try:
@@ -84,12 +83,13 @@ class PythonWebTest(unittest.TestCase):
         # elements 311 개 search 됨 줄일 수 있으면 줄일 것
         # print(len(elements))
         # reverse로 하는 이유는 시간 절약을 위해서
-        for element in elements.reverse():
+        elements.reverse()
+        for element in elements:
             if element.text == 'CNY':
                 element.click()
 
-
         # 품목추가 버튼 누를 경우 (item 여러개 추가하는 경우)
+        # 해결 필요
 
         # 이미지 업로드
         element = driver.find_element_by_xpath('//input[@id="EstimateImage"]')
@@ -107,11 +107,14 @@ class PythonWebTest(unittest.TestCase):
         print('payment')
         driver = self.driver
         driver.get(PROCUREMENT_URL)
-        
+
+        element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('이름'))
+        element.send_keys('김철')
+        element.send_keys(Keys.ENTER)
+
         # 탭 이동 payment page로
         xpath_second_tap = XPATH_TAB_TEMPLATE.format(TAP_HREF_NAME[1])
         element = driver.find_element_by_xpath(xpath_second_tap)
-        print('1', element.text)
         element.click()
 
         # 제출한 품의가 있을 경우 가장 최신 품의
@@ -125,13 +128,13 @@ class PythonWebTest(unittest.TestCase):
         # 선택된 품의가 있는지 확인하고 없으면 넘어가는 부분이 있어야 하는데 생략
 
         # 결제방법 선택
-        element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('품의 번호'))
-        element.click()
+        element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('결제 방법'))
         element.send_keys(Keys.ARROW_DOWN)
         element.send_keys(Keys.ENTER)
 
         # (option) 거래처 변경 할 수도 있음
 
+        # 현제 발주일, 결제일 고정 (
         # 발주일 클릭
         element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('발주일'))
         element.click()
@@ -166,7 +169,59 @@ class PythonWebTest(unittest.TestCase):
         element = driver.find_element_by_xpath(XPATH_TEXTAREA_TEMPLATE.format('추가 내용 및 비고'))
         element.send_keys('추가 내용 및 비고 없음')
 
-        time.sleep(20)
+        time.sleep(10)
+
+    # @unittest.skip('skip')
+    def test_fill_3_receipt(self):
+        print('receipt')
+        driver = self.driver
+        driver.get(PROCUREMENT_URL)
+
+        element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('이름'))
+        element.send_keys('김철')
+        element.send_keys(Keys.ENTER)
+
+        # 탭 이동 payment page로
+        xpath_third_tap = XPATH_TAB_TEMPLATE.format(TAP_HREF_NAME[2])
+        element = driver.find_element_by_xpath(xpath_third_tap)
+        element.click()
+
+        # 제출한 품의가 있을 경우 가장 최신 품의
+        elements = driver.find_elements_by_xpath(XPATH_INPUT_TEMPLATE.format('품의 번호'))
+        # spread sheet에서 loading 되어지는데 필요한 시간
+        time.sleep(2)
+        # '품의 번호' input이 구매 발주-결제 에도 있어서 2개가 검색 되므로 2번째 input을 사용하자
+        element = elements[1]
+        element.send_keys(Keys.ARROW_DOWN)
+        element.send_keys(Keys.ENTER)
+
+        label = "검수 결과 (예: 이상 없음.)"
+        input = '이상 없음'
+        element = driver.find_element_by_xpath(XPATH_TEXTAREA_TEMPLATE.format(label))
+        element.send_keys(input)
+
+        label = "입고 위치"
+        input = '서울'
+        element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format(label))
+        element.send_keys(input)
+        element.send_keys(Keys.ENTER)
+
+        label = "부분 입고 내용 및 비고 사항"
+        input = '모든 물품 입고 완료'
+        element = driver.find_element_by_xpath(XPATH_TEXTAREA_TEMPLATE.format(label))
+        element.send_keys(input)
+
+        # 이미지 업로드 (입고 사진)
+        element = driver.find_element_by_xpath('//input[@id="logImage"]')
+        file_path = os.path.abspath(PATH_IMG)
+        element.send_keys(file_path)
+
+        # 이미지 업로드 (거래명세서)
+        element = driver.find_element_by_xpath('//input[@id="tradeStatementImage"]')
+        file_path = os.path.abspath(PATH_IMG)
+        element.send_keys(file_path)
+
+        time.sleep(10)
 
 
 if __name__ == '__main__':
