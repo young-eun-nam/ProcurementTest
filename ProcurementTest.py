@@ -3,20 +3,9 @@ from selenium.webdriver.common.keys import Keys
 import time
 import os
 
-# CSS_SELECTOR 변수
-submit_button_css_selector = '#app > div.application--wrap > div > div > div.layout.row.justify-center > div > div > div.v-card__text > div > div.v-window > div > div:nth-child(1) > div > form > div.v-card__actions.px-3 > button.v-btn.v-btn--block.theme--dark > div'
-
 PROCUREMENT_URL = "http://141.223.199.172:3210/#/procurement"
 PRODUCT_URL = "http://www.gsshop.com/deal/deal.gs?dealNo=30845205&kwd=%EB%A7%88%EC%9A%B0%EC%8A%A4&ab=a&gsid=srcheshop-result&lseq=396001"
-'''
-INPUT_LABEL_NAMES = ['품목명', '프로젝트/제품', '사용 목적', '결재담당자', '통화_', '공급가액', '부가세', '공급가액합계(a)',
-                     '결제 계정-공급가액', '부가세 합계(b)', '결제 계정-부가세', '배송료(c)', '결제 계정-배송료', '기타수수료(d)',
-                     '결제 계정-기타수수료', '통화', '총액(VAT 포함)', '거래처', '제품 링크', '세부 내용 및 비고', '품의 번호', '품목',
-                     '통화', '총액(VAT 포함)', '발주자 선택', '발주자', '발주 일자', '프로젝트/제품', '사용 목적', '결제 계정',
-                     '거래처', '제품 링크', '세부 내용 및 비고', '추가 내용 및 비고', '품의 번호', '품목', '통화', '총액(VAT 포함)',
-                     '프로젝트/제품', '사용 목적', '검수자', '입고 위치', '입고 일자', '제품 링크', '품의 내용 및 비고',
-                     '발주 내용 및 비고', '검수 결과 (예: 이상 없음.)', '부분 입고 내용 및 비고 사항']
-'''
+IMG_PATH = '/Users/admin/Screenshot_2.png'
 
 INPUT_LABEL_NAMES_AND_INPUT = (('이름', '남영은'),
                                ('품목명', '품목명1'),
@@ -26,7 +15,7 @@ INPUT_LABEL_NAMES_AND_INPUT = (('이름', '남영은'),
                                ('모델명',  '모델명1'),
                                ('제조사', '제조사1'),
                                ('규격', '규격1'),
-                               # ('통화_', '품목명1'),
+                               # ('통화_', 'USD'),
                                ('단가', '10000'),
                                ('수량',  '1'),
                                # ('공급가액', '품목명1'),
@@ -52,8 +41,11 @@ driver.get(PROCUREMENT_URL)
 for label_name, input in INPUT_LABEL_NAMES_AND_INPUT:
     try:
         element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format(label_name))
+        if label_name == '수량':
+            element.send_keys(Keys.BACK_SPACE)
+        time.sleep(0.05)
         element.send_keys(input)
-        time.sleep(0.2)
+        time.sleep(0.05)
         element.send_keys(Keys.ENTER)
     except Exception as e:
         print(label_name, input, e)
@@ -65,12 +57,13 @@ for label_name, input in TEXTAREA_LABEL_NAMES_AND_INPUT:
     except Exception as e:
         print(label_name, input, e)
 
-file_button_css_selector = '#EstimateImage'
-file_upload = driver.find_element_by_css_selector(file_button_css_selector)
-file_path = os.path.abspath('/Users/admin/Screenshot_2.png')
-file_upload.send_keys(file_path)
+# 이미지 업로드
+element = driver.find_element_by_xpath('//input[@id="EstimateImage"]')
+file_path = os.path.abspath(IMG_PATH)
+element.send_keys(file_path)
 
-submit = driver.find_element_by_css_selector(submit_button_css_selector)
-submit.click()
+# 품의제출 버튼 클릭
+element = driver.find_element_by_xpath('//button[@class="v-btn v-btn--block theme--dark"]')
+element.click()
 time.sleep(10)
 driver.close()
