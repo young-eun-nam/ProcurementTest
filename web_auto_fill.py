@@ -59,14 +59,16 @@ class PythonWebTest(unittest.TestCase):
         print('proposal')
         driver = self.driver
         driver.get(PROCUREMENT_URL)
-
+        time.sleep(1)
         for label_name, input in INPUT_LABEL_NAMES_AND_INPUT:
             try:
                 element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format(label_name))
+                if label_name == '수량':
+                    element.send_keys(Keys.BACK_SPACE)
+                time.sleep(0.05)
                 element.send_keys(input)
                 time.sleep(0.05)
                 element.send_keys(Keys.ENTER)
-                time.sleep(0.05)
             except Exception as e:
                 print(label_name, input, e)
 
