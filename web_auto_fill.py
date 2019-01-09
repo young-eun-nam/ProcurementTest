@@ -14,17 +14,17 @@ INPUT_LABEL_NAMES_AND_INPUT = (('이름', '김철'),
                                ('모델명',  '모델명1'),
                                ('제조사', '제조사1'),
                                ('규격', '규격1'),
-                               # ('통화_', '품목명1'),
+                               # ('통화_', 'USD'),
                                ('단가', '100'),
                                ('수량',  '2'),
                                # ('공급가액', '품목명1'),
                                ('결제 계정-공급가액',  '투자_QD'),
                                ('결제 계정-부가세', '투자_QD'),
                                ('배송료(c)',  '2000'),
-                               ('결제 계정-배송료', '투자_QD'),
+                               ('결제 계정-배송료', '과제_TIPS'),
                                ('기타수수료(d)',  '3000'),
-                               ('결제 계정-기타수수료', '투자_QD'),
                                # ('통화',  'USD'),
+                               ('결제 계정-기타수수료', '투자_LH'),
                                ('거래처',  '한랩서비스')
                                )
 
@@ -59,6 +59,7 @@ class PythonWebTest(unittest.TestCase):
         print('proposal')
         driver = self.driver
         driver.get(PROCUREMENT_URL)
+        time.sleep(1)
 
         for label_name, input in INPUT_LABEL_NAMES_AND_INPUT:
             try:
@@ -66,6 +67,7 @@ class PythonWebTest(unittest.TestCase):
                 element.send_keys(input)
                 time.sleep(0.05)
                 element.send_keys(Keys.ENTER)
+                time.sleep(0.05)
             except Exception as e:
                 print(label_name, input, e)
 
@@ -77,9 +79,17 @@ class PythonWebTest(unittest.TestCase):
                 print(label_name, input, e)
 
         # 통화 변경
-        # 에러문구 뜨는 것도 확인
-        # 계산결과가 맞는지 확인하는 것 (공급가액 합게, 부가세 합계, 총액(VAT 포함))
-        # item 여러개 추가하는 경우
+        driver.find_element_by_xpath('//div[@class="v-select__selection v-select__selection--comma"]').click()
+        elements = driver.find_elements_by_xpath('//div[@class="v-list__tile__title"]')
+        # elements 311 개 search 됨 줄일 수 있으면 줄일 것
+        # print(len(elements))
+        # reverse로 하는 이유는 시간 절약을 위해서
+        for element in elements.reverse():
+            if element.text == 'CNY':
+                element.click()
+
+
+        # 품목추가 버튼 누를 경우 (item 여러개 추가하는 경우)
 
         # 이미지 업로드
         element = driver.find_element_by_xpath('//input[@id="EstimateImage"]')
