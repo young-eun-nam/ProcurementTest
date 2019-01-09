@@ -171,6 +171,11 @@ class PythonWebTest(unittest.TestCase):
         element = driver.find_element_by_xpath(XPATH_TEXTAREA_TEMPLATE.format('추가 내용 및 비고'))
         element.send_keys('추가 내용 및 비고 없음')
 
+        # 이미지 업로드 (세금계산서)
+        element = driver.find_element_by_xpath('//input[@id="billImage"]')
+        file_path = os.path.abspath(PATH_IMG)
+        element.send_keys(file_path)
+
         time.sleep(10)
 
     # @unittest.skip('skip')
