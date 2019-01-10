@@ -40,6 +40,36 @@ XPATH_TAB_TEMPLATE = '//a[@href="#{}"]'
 
 PATH_IMG = 'C:\\Temp\\example.png'
 
+def add_multiple_item(driver, values=['모델명', '제조사', '규격', None, '20', '10', None, None]):
+    def put_value_in_elements(values, input_elements):
+        for value, element in zip(values, input_elements):
+            if value is None:
+                continue
+            else:
+                element.send_keys(Keys.CONTROL + "a")
+                element.send_keys(Keys.DELETE)
+                element.send_keys(value)
+
+    # 품목 추가 버튼
+    x_path = '//button[@class="v-btn v-btn--flat v-btn--outline v-btn--depressed theme--light grey--text"]'
+    driver.find_element_by_xpath(x_path).click()
+    driver.find_element_by_xpath(x_path).click()
+
+    # 각 라인 추가
+    x_path = '//div[@class="layout row wrap justify-center"]/div[@class="flex px-1 xs12 sm8 md3"]/..'
+    elements = driver.find_elements_by_xpath(x_path)
+
+    # element 추가
+    for index, element in enumerate(elements):
+        tmp_values = []
+        for value in values:
+            if value is not None:
+                tmp_values.append(value + str(index))
+            else:
+                tmp_values.append(value)
+
+        input_elements = element.find_elements_by_tag_name("input")
+        put_value_in_elements(tmp_values, input_elements)
 
 class PythonWebTest(unittest.TestCase):
 
@@ -64,8 +94,8 @@ class PythonWebTest(unittest.TestCase):
             try:
                 element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format(label_name))
                 if label_name == '수량':
-                    element.send_keys(Keys.BACK_SPACE)
-                time.sleep(0.05)
+                    element.send_keys(Keys.CONTROL + "a")
+                    element.send_keys(Keys.DELETE)
                 element.send_keys(input)
                 time.sleep(0.05)
                 element.send_keys(Keys.ENTER)
@@ -91,7 +121,7 @@ class PythonWebTest(unittest.TestCase):
                 element.click()
 
         # 품목추가 버튼 누를 경우 (item 여러개 추가하는 경우)
-        # 해결 필요
+        add_multiple_item(driver, ['모델명', '제조사', '규격', None, '20', '10', None, None])
 
         # 이미지 업로드
         element = driver.find_element_by_xpath('//input[@id="EstimateImage"]')
@@ -245,7 +275,6 @@ class PythonWebTest(unittest.TestCase):
                 element.click()
 
         time.sleep(10)
-
 
 if __name__ == '__main__':
 
