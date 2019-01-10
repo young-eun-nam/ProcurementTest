@@ -1,8 +1,10 @@
 import unittest
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 import time
 import os
+
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import posixpath
 
 PROCUREMENT_URL = "http://141.223.199.172:3210/#/procurement"
 
@@ -39,6 +41,11 @@ TAP_HREF_NAME = ('proposal', 'payment', 'receipt')
 XPATH_TAB_TEMPLATE = '//a[@href="#{}"]'
 
 PATH_IMG = 'C:\\Temp\\example.png'
+
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__)).replace('\\', '/')
+IMAGE_SAMPLE_DIR = posixpath.join(ROOT_DIR + '/image_sample')
+IMAGE_SAMPLE_NAMES = ('견적서_결제.png', '세금계산서.png', '입고사진.png', '거래명세서.png')
+PATH_IMG_FILES = [posixpath.join(IMAGE_SAMPLE_DIR, file_name) for file_name in IMAGE_SAMPLE_NAMES]
 
 
 def add_multiple_item(driver, values=['모델명', '제조사', '규격', None, '20', '10', None, None]):
@@ -141,7 +148,7 @@ class PythonWebTest(unittest.TestCase):
 
         # 이미지 업로드
         element = driver.find_element_by_xpath('//input[@id="EstimateImage"]')
-        file_path = os.path.abspath(PATH_IMG)
+        file_path = os.path.abspath(PATH_IMG_FILES[0])
         element.send_keys(file_path)
 
         # 품의제출 버튼 클릭
@@ -220,7 +227,7 @@ class PythonWebTest(unittest.TestCase):
 
         # 이미지 업로드 (세금계산서)
         element = driver.find_element_by_xpath('//input[@id="billImage"]')
-        file_path = os.path.abspath(PATH_IMG)
+        file_path = os.path.abspath(PATH_IMG_FILES[1])
         element.send_keys(file_path)
 
         # 결제보고 버튼 클릭
@@ -232,6 +239,7 @@ class PythonWebTest(unittest.TestCase):
         # 엑셀에 반영될 때 까지 각 단계에서 24, 17, 21초
         time.sleep(25)
 
+    @unittest.skip('skip')
     def test_fill_2_payment_cancle(self):
         print('payment')
         driver = self.driver
@@ -297,12 +305,12 @@ class PythonWebTest(unittest.TestCase):
 
         # 이미지 업로드 (입고 사진)
         element = driver.find_element_by_xpath('//input[@id="logImage"]')
-        file_path = os.path.abspath(PATH_IMG)
+        file_path = os.path.abspath(PATH_IMG_FILES[2])
         element.send_keys(file_path)
 
         # 이미지 업로드 (거래명세서)
         element = driver.find_element_by_xpath('//input[@id="tradeStatementImage"]')
-        file_path = os.path.abspath(PATH_IMG)
+        file_path = os.path.abspath(PATH_IMG_FILES[3])
         element.send_keys(file_path)
 
         # 입고보고 버튼 클릭
@@ -313,7 +321,7 @@ class PythonWebTest(unittest.TestCase):
 
         time.sleep(10)
 
-
+    @unittest.skip('skip')
     def test_fill_3_receipt_cancle(self):
         print('receipt')
         driver = self.driver
