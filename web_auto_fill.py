@@ -40,6 +40,7 @@ XPATH_TAB_TEMPLATE = '//a[@href="#{}"]'
 
 PATH_IMG = 'C:\\Temp\\example.png'
 
+
 def add_multiple_item(driver, values=['모델명', '제조사', '규격', None, '20', '10', None, None]):
     def put_value_in_elements(values, input_elements):
         for value, element in zip(values, input_elements):
@@ -70,6 +71,21 @@ def add_multiple_item(driver, values=['모델명', '제조사', '규격', None, 
 
         input_elements = element.find_elements_by_tag_name("input")
         put_value_in_elements(tmp_values, input_elements)
+
+
+def choose_tap(driver, index):
+    xpath_tap = XPATH_TAB_TEMPLATE.format(TAP_HREF_NAME[index])
+    element = driver.find_element_by_xpath(xpath_tap)
+    element.click()
+
+def click_cancle_button(driver, name_button='품의취소'):
+    # '구매 발주-결제'에서 - 품의취소
+    # '입고 검수'에서 - 구매취소
+    elements = driver.find_elements_by_xpath('//button[@class="mx-1 v-btn v-btn--block theme--dark"]')
+    for element in elements:
+        element.text.__contains__(name_button)
+        element.click()
+        break
 
 class PythonWebTest(unittest.TestCase):
 
@@ -148,9 +164,7 @@ class PythonWebTest(unittest.TestCase):
         element.send_keys(Keys.ENTER)
 
         # 탭 이동 payment page로
-        xpath_second_tap = XPATH_TAB_TEMPLATE.format(TAP_HREF_NAME[1])
-        element = driver.find_element_by_xpath(xpath_second_tap)
-        element.click()
+        choose_tap(driver, 1)
 
         # 제출한 품의가 있을 경우 가장 최신 품의
         element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('품의 번호'))
@@ -218,6 +232,31 @@ class PythonWebTest(unittest.TestCase):
         # 엑셀에 반영될 때 까지 각 단계에서 24, 17, 21초
         time.sleep(25)
 
+    def test_fill_2_payment_cancle(self):
+        print('payment')
+        driver = self.driver
+        driver.get(PROCUREMENT_URL)
+
+        element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('이름'))
+        element.send_keys('김철')
+        element.send_keys(Keys.ENTER)
+
+        # 탭 이동 payment page로
+        choose_tap(driver, 1)
+
+        # 제출한 품의가 있을 경우 가장 최신 품의
+        element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('품의 번호'))
+        element.click()
+        # spread sheet에서 loading 되어지는데 필요한 시간
+        time.sleep(2)
+
+        element.send_keys(Keys.ARROW_DOWN)
+        element.send_keys(Keys.ENTER)
+
+        click_cancle_button(driver, '품의취소')
+
+        time.sleep(25)
+
     # @unittest.skip('skip')
     def test_fill_3_receipt(self):
         print('receipt')
@@ -229,9 +268,7 @@ class PythonWebTest(unittest.TestCase):
         element.send_keys(Keys.ENTER)
 
         # 탭 이동 payment page로
-        xpath_third_tap = XPATH_TAB_TEMPLATE.format(TAP_HREF_NAME[2])
-        element = driver.find_element_by_xpath(xpath_third_tap)
-        element.click()
+        choose_tap(driver, 2)
 
         # 제출한 품의가 있을 경우 가장 최신 품의
         elements = driver.find_elements_by_xpath(XPATH_INPUT_TEMPLATE.format('품의 번호'))
@@ -275,6 +312,30 @@ class PythonWebTest(unittest.TestCase):
                 element.click()
 
         time.sleep(10)
+
+
+    def test_fill_3_receipt_cancle(self):
+        print('receipt')
+        driver = self.driver
+        driver.get(PROCUREMENT_URL)
+
+        element = driver.find_element_by_xpath(XPATH_INPUT_TEMPLATE.format('이름'))
+        element.send_keys('김철')
+        element.send_keys(Keys.ENTER)
+
+        # 탭 이동 payment page로
+        choose_tap(driver, 2)
+
+        # 제출한 품의가 있을 경우 가장 최신 품의
+        elements = driver.find_elements_by_xpath(XPATH_INPUT_TEMPLATE.format('품의 번호'))
+        # spread sheet에서 loading 되어지는데 필요한 시간
+        time.sleep(2)
+        # '품의 번호' input이 구매 발주-결제 에도 있어서 2개가 검색 되므로 2번째 input을 사용하자
+        element = elements[1]
+        element.send_keys(Keys.ARROW_DOWN)
+        element.send_keys(Keys.ENTER)
+
+        click_cancle_button(driver, '구매취소')
 
 
 if __name__ == '__main__':
