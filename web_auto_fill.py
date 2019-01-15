@@ -100,7 +100,7 @@ class PythonWebTest(unittest.TestCase):
     def setUp(self):
         '''
         for linux without display
-        display = Display(visible=0, size=(1024, 768))
+        display = Display(visible=0, size=(2560, 1440))
         display.start()
         self.driver = webdriver.Chrome('/home/dev/chromedriver',
                                   service_args=['--verbose', '--log-path=/tmp/chromedriver.log'])
