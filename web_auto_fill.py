@@ -5,6 +5,7 @@ import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import posixpath
+from pyvirtualdisplay import Display
 
 PROCUREMENT_URL = "http://141.223.199.172:3210/#/procurement"
 
@@ -97,6 +98,13 @@ def click_cancle_button(driver, name_button='품의취소'):
 class PythonWebTest(unittest.TestCase):
 
     def setUp(self):
+        '''
+        for linux without display
+        display = Display(visible=0, size=(1024, 768))
+        display.start()
+        self.driver = webdriver.Chrome('/home/dev/chromedriver',
+                                  service_args=['--verbose', '--log-path=/tmp/chromedriver.log'])
+        '''
         self.driver = webdriver.Chrome()
         print('open browser')
 
